@@ -15,34 +15,28 @@ require_once("My DB.php");
     
     function __construct($id)
     {
-        
-        if (!$id)
-        return;
-        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare(
-            "SELECT * FROM user WHERE user.id=?"
-
-        );   
+        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare();
+            
         if($id !="")
         {
-            $sql="select * from user where ID=?";
-            $stmt->bind_param('i', $id);
-            $result = $stmt->execute();
+            $sql="select * from User where ID = $id";
+            $UserDataSet = mysqli_query($sql)  or die (mysqli_error());
+            if($row = mysqli_fetch_array($UserDataSet))
+            {
 
-           if (!$result) {
-                die("User with $id not found.");
-                return;
+                $this->id = $id;
+                $this->FullName = $row ["FullName"];
+                $this->USERNAME = $row ["USERNAME"];
+                $this->EMAIL = $row ["EMAIL"];
+                $this->password = $row ["Password"];
+                $this-> Address = $row ["Address"];
+                $this->DOB = $row ["DOB"];
+             // $this->USERTYPEObj = new USERTYPE();
+             // $this->LINKObj = new LINK();
             }
+           
 
-            $result = $stmt->get_result()->fetch_assoc();
-
-            $this->id = $id;
-            $this->FullName = $result["FullName"];
-            $this->EMAIL = $result["EMAIL"];
-            $this->password = $result["Password"];
-            $this-> Address = $result["Address"];
-            $this->signupDate = $result["SignupDate"];
-           // $this->USERTYPEObj = new USERTYPE();
-           // $this->LINKObj = new LINK();
+            
 
         }
 
@@ -60,7 +54,7 @@ require_once("My DB.php");
         $EMAIL = $_POST['EMAIL'];
        }
 
-       $sql = "INSERT INTO  'user' ('FullName','DOB' , 'USERNAME', 'password', 'Address', 'EMAIL') VALUES ('$FullName', '$DOB',  $USERNAME', '$password' , ' $Address', '  $EMAIL')  ";
+       $sql = "INSERT INTO  'User' ('FullName','DOB' , 'USERNAME', 'password', 'Address', 'EMAIL') VALUES ('$FullName', '$DOB',  $USERNAME', '$password' , ' $Address', '  $EMAIL')  ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -91,7 +85,7 @@ require_once("My DB.php");
         $EMAIL = $_POST['EMAIL'];
        }
 
-       $sql = "UPDATE  'user' SET 'FullName' = $FullName, 'ID' = $ID  ,'DOB' =  $DOB, 'USERNAME' = $USERNAME, 'password' =  $password , 'Address' = $Address, 'EMAIL' = $EMAIL   ";
+       $sql = "UPDATE  'User' SET 'FullName' = $FullName, 'ID' = $ID  ,'DOB' =  $DOB, 'USERNAME' = $USERNAME, 'password' =  $password , 'Address' = $Address, 'EMAIL' = $EMAIL   ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -116,7 +110,7 @@ require_once("My DB.php");
        
        }
 
-       $sql = "DELETE  FRoM 'user' WHERE 'id' = '$user_id'";
+       $sql = "DELETE  FRoM 'User' WHERE 'id' = '$user_id'";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -137,22 +131,56 @@ require_once("My DB.php");
 
     public static function SelectAllusersInDB()
 	{
-        $StudentDataSet = "";
-		$db = DatabaseConnection::getInstance();
-		$sql="select * from student order by FullName";
-		$StudentDataSet = mysqli_connect($sql) ;
+        $UserDataSet = "";
+        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
+		$sql="select * from User order by FullName";
+		$UserDataSet = mysqli_connect($sql) ;
 		
 		$i=0;
-		$Result = "";
-		while ($row = mysqli_fetch_array($StudentDataSet))
+		$result = "";
+		while ($row = mysqli_fetch_array($UserDataSet))
 		{
-			$MyObj= new student($row["Id"]);
-			$Result[$i]=$MyObj;
+			$MyObj= new user($row["Id"]);
+			$result[$i]=$MyObj;
 			$i++;
 		}
-		return $Result;
+		return $result;
 		
 	}
+
+
+    public function register()
+    {
+       if(isset($_POST['submit']))
+       {
+        $USERNAME = $_POST['USERNAME'];
+        $EMAIL = $_POST['EMAIL'];
+        $password = $_POST['password'];
+        $confirmpassword = $_POST['confirmpassword'];
+        
+        if( $password ==   $confirmpassword)
+        {
+            $sql = "INSERT INTO 'user'  ( 'USERNAME', 'EMAIL', 'password', 'confirmpassword' ) VALUES ('$USERNAME', '$email' ,'$passward' , '$confirmpassword' )";
+
+        }
+
+
+       }
+
+       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
+
+       if($result == TRUE)
+       {
+           echo " You are registered succesfully";
+
+       }
+
+       else {
+           echo "Password not match:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
+       }
+
+
+    }
 
 }
 
