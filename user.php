@@ -1,7 +1,6 @@
 <?php
-require_once("system database");
-require_once("My DB.php");
- abstract class user
+require_once("DatabaseConnection.php");
+class user
 {
     public $ID;
     public $FullName;
@@ -12,6 +11,8 @@ require_once("My DB.php");
     public $EMAIL;
     public $USERTYPEObj;
     public $LINKObj;  
+    //public $x = new DatabaseConnection();
+
     
     function __construct($id)
     {
@@ -19,7 +20,7 @@ require_once("My DB.php");
             
         if($id !="")
         {
-            $sql="select * from User where ID = $id";
+            $sql="select * from user where ID = $id";
             $UserDataSet = mysqli_query($sql)  or die (mysqli_error());
             if($row = mysqli_fetch_array($UserDataSet))
             {
@@ -31,8 +32,8 @@ require_once("My DB.php");
                 $this->password = $row ["Password"];
                 $this-> Address = $row ["Address"];
                 $this->DOB = $row ["DOB"];
-             // $this->USERTYPEObj = new USERTYPE();
-             // $this->LINKObj = new LINK();
+              $this->USERTYPEObj = new USERTYPE();
+              $this->LINKObj = new LINK();
             }
            
 
@@ -54,7 +55,7 @@ require_once("My DB.php");
         $EMAIL = $_POST['EMAIL'];
        }
 
-       $sql = "INSERT INTO  'User' ('FullName','DOB' , 'USERNAME', 'password', 'Address', 'EMAIL') VALUES ('$FullName', '$DOB',  $USERNAME', '$password' , ' $Address', '  $EMAIL')  ";
+       $sql = "INSERT INTO  'user' ('FullName','DOB' , 'USERNAME', 'password', 'Address', 'EMAIL') VALUES ('$FullName', '$DOB',  $USERNAME', '$password' , ' $Address', '  $EMAIL')  ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -85,7 +86,7 @@ require_once("My DB.php");
         $EMAIL = $_POST['EMAIL'];
        }
 
-       $sql = "UPDATE  'User' SET 'FullName' = $FullName, 'ID' = $ID  ,'DOB' =  $DOB, 'USERNAME' = $USERNAME, 'password' =  $password , 'Address' = $Address, 'EMAIL' = $EMAIL   ";
+       $sql = "UPDATE  'user' SET 'FullName' = $FullName, 'ID' = $ID  ,'DOB' =  $DOB, 'USERNAME' = $USERNAME, 'password' =  $password , 'Address' = $Address, 'EMAIL' = $EMAIL   ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -110,7 +111,7 @@ require_once("My DB.php");
        
        }
 
-       $sql = "DELETE  FRoM 'User' WHERE 'id' = '$user_id'";
+       $sql = "DELETE  FRoM 'user' WHERE 'id' = '$user_id'";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -133,7 +134,7 @@ require_once("My DB.php");
 	{
         $UserDataSet = "";
         $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-		$sql="select * from User order by FullName";
+		$sql="select * from user order by FullName";
 		$UserDataSet = mysqli_connect($sql) ;
 		
 		$i=0;
@@ -182,9 +183,44 @@ require_once("My DB.php");
 
     }
 
+
+    public function login()
+    {
+       if(isset($_POST['submit']))
+       {
+        $USERNAME = $_POST['USERNAME'];
+        $password = $_POST['password'];
+        
+            $sql = mysqli_query( " select password from user where username = '$USERNAME'");
+            
+            $result = DatabaseConnection::getInstance()->database_connection->query($sql);
+            if($row = mysqli_fetch_array($sql))
+            {
+                if($password == $row['password'] )
+                {
+                    echo " Valid Password";
+                }
+                else 
+                echo " Invalid Password";
+            }
+            else 
+            echo " Invalid  Username";
+        
+            }
+
+
+      
+
+       
+
+    }
 }
 
 
 
 
+$x = new user(2);
+echo $x->FullName;
+echo "<br>";
+echo $x->EMAIL;
 ?>
