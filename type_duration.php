@@ -5,6 +5,7 @@ class type_duration
     public $id;
     public $duration;
 
+
     
     function __construct($id)
     {
@@ -13,12 +14,14 @@ class type_duration
         if($id !="")
         {
             $sql="select * from type_duration where id = $id";
-            $UserDataSet = mysqli_query($sql)  or die (mysqli_error());
-            if($row = mysqli_fetch_array($UserDataSet))
+            $type_durationDataSet = mysqli_query($sql)  or die (mysqli_error());
+            if($row = mysqli_fetch_array($type_durationDataSet))
             {
 
                 $this->id = $id;
-                $this->duration = $row ["duration "];
+                $this->duration = $row ["duration"];
+
+                
             }
 
         }
@@ -26,11 +29,13 @@ class type_duration
     }
 
 
+
     public function creat()
     {
        if(isset($_POST['submit'])) {
-        $id = $_POST['ID'];
+        $id = $_POST['id'];
         $duration = $_POST['duration'];
+      
        }
 
        $sql = "INSERT INTO  type_duration ('duration') VALUES ('$duration')  ";
@@ -51,16 +56,14 @@ class type_duration
     }
 
 
-
-
     public function update()
     {
        if(isset($_POST['update'])) {
-        $id = $_POST['ID'];
+        $id = $_POST['id'];
         $duration = $_POST['duration'];
        }
 
-       $sql = "UPDATE  type_duration SET 'duration' = $duration, 'id' = $ID   ";
+       $sql = "UPDATE  type_duration SET 'id' = $id , duration' = $duration ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -76,16 +79,16 @@ class type_duration
 
 
     }
-   
+
 
     public function delete()
     {
        if(isset($_GET['id'])) {
-       $user_id = $_GET['id'];
+        $type_duration_id = $_GET['id'];
        
        }
 
-       $sql = "DELETE  FROM type_duration WHERE 'id' = '$user_id'";
+       $sql = "DELETE  FROM type_duration WHERE 'id' = '$type_duration_id'";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -101,6 +104,9 @@ class type_duration
 
 
     }
+
+
 }
+
 
 ?>
