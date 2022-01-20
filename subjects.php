@@ -1,8 +1,7 @@
 <?php
-include_once("My DB.php");
+include_once 'myDB.php';
 include_once("teacher.php");
-class subjects
-{
+class subjects {
     public $ID;
     public $SUBJECT_NAME;
     public $SUBJECT_CODE;
@@ -10,99 +9,64 @@ class subjects
     public $DESCRIPTION;
     public $teacherObj; 
 
-    
     function __construct($id)
     {
-        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare();
-            
-        if($id !="")
-        {
-            $sql="select * from subjects where ID = $id";
-            $subjectsDataSet = mysqli_query($sql)  or die (mysqli_error());
-            if($row = mysqli_fetch_array($subjectsDataSet))
-            {
+		global $con;
+                $con = mysqli_connect("localhost", "root", "","system database");
+		if ($id != -1)
+		{	
+			$sql="SELECT * FROM  subjects WHERE ID=$id";
+			$userDataSet = mysqli_query($con,$sql);
+			$row = mysqli_fetch_array($userDataSet);
 
-                $this->ID = $id;
-                $this->SUBJECT_NAME = $row ["SUBJECT_NAME"];
-                $this->SUBJECT_CODE = $row ["SUBJECT_CODE"];
-                $this->GRADE = $row ["GRADE"];
-                $this->DESCRIPTION = $row ["DESCRIPTION"];
-                $this->teacherObj = new teacher();
-            }
-
+            $this->ID = $id;
+            $this->SUBJECT_NAME = $row ["SUBJECT_NAME"];
+            $this->SUBJECT_CODE = $row ["SUBJECT_CODE"];
+            $this->GRADE = $row ["GRADE"];
+            $this->DESCRIPTION = $row ["DESCRIPTION"];
+            $this->teacherObj = new teacher();
+                      
+                      
+                        
+		    }
         }
-
-    }
-
-    public function creat()
-    {
-       if(isset($_POST['submit'])) {
-        $ID = $_POST['ID'];
-        $SUBJECT_NAME = $_POST['SUBJECT_NAME'];
-        $SUBJECT_CODE = $_POST['SUBJECT_CODE'];
-        $GRADE = $_POST['GRADE'];
-        $DESCRIPTION = $_POST['DESCRIPTION'];
-       }
-
-       $sql = "INSERT INTO   subjects ('SUBJECT_NAME','SUBJECT_CODE' , 'GRADE', 'DESCRIPTION ') VALUES ('$SUBJECT_NAME', '$SUBJECT_CODE',  $GRADE', '$DESCRIPTION ' )  ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function creat($FullName,$USERNAME,$password,$DOB) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="INSERT INTO  subjects (ID,SUBJECT_NAME,SUBJECT_CODE ,GRADE,DESCRIPTION,teacherObj) VALUES ('$ID','$SUBJECT_NAME', '$SUBJECT_CODE ' ,'$GRADE','$DESCRIPTION','$teacherObj' )";
+        mysqli_query($con,$sql);
+         if($con == TRUE)
        {
-           echo "New record created succesfully";
+           echo " Record created succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
-    }
-
-   
-
-    public function update()
-    {
-       if(isset($_POST['update'])) {
-        $ID = $_POST['ID'];
-        $SUBJECT_NAME = $_POST['SUBJECT_NAME'];
-        $SUBJECT_CODE = $_POST['SUBJECT_CODE'];
-        $GRADE = $_POST['GRADE'];
-        $DESCRIPTION = $_POST['DESCRIPTION'];
-       }
-
-       $sql = "UPDATE  subjects SET  'ID' = $ID  ,'SUBJECT_NAME' =  $SUBJECT_NAME, 'SUBJECT_CODE' = $SUBJECT_CODE, 'GRADE' =  $GRADE , 'DESCRIPTION ' = $DESCRIPTION    ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    }   
+    function update($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql = "UPDATE   subjects SET 'SUBJECT_NAME' = $SUBJECT_NAME, 'ID' = $ID  ,'SUBJECT_CODE' =  $SUBJECT_CODE, 'GRADE' = $GRADE, 'DESCRIPTION' =  $DESCRIPTION , 'teacherObj' = $teacherObj   ";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
-           echo "New record Updated succesfully";
+           echo " Record updated succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
 
-
-    public function delete()
-    {
-       if(isset($_GET['ID'])) {
-       $subjects_id = $_GET['ID'];
-       
-       }
-
-       $sql = "DELETE  FROM subjects WHERE 'ID' = '$subjects_id'";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function delete($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="DELETE FROM  subjects WHERE ID = $id";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
            echo " Record deleted succesfully";
 
@@ -111,16 +75,10 @@ class subjects
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
-
-   
-
-   
-
     
 }
+
 
 ?>
 
