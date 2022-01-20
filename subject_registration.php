@@ -1,113 +1,77 @@
 <?php
-include_once("My DB.php");
+include_once 'myDB.php';
 include_once("usertype.php");
 include_once("tb_users.php");
 include_once("user.php");
 include_once("educational_yea.php");
 include_once("payment.php");
-
-class subject_registration
-{
+class subjects_registration {
+   
     public $ID;
     public $EducationalYearObj;
     public $UserObj; 
     public $DateTimeStamp;
     public $IsDeleted;
     public $PayObj; 
-    //public $x = new DatabaseConnection();
 
-    
     function __construct($id)
     {
-        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare();
-            
-        if($id !="")
-        {
-            $sql="select * from subject_registration where ID = $id";
-            $UserDataSet = mysqli_query($sql)  or die (mysqli_error());
-            if($row = mysqli_fetch_array($UserDataSet))
-            {
+		global $con;
+                $con = mysqli_connect("localhost", "root", "","system database");
+		if ($id != -1)
+		{	
+			$sql="SELECT * FROM  subjects_registration WHERE ID=$id";
+			$userDataSet = mysqli_query($con,$sql);
+			$row = mysqli_fetch_array($userDataSet);
 
-                $this->ID = $id;
-                $this->EducationalyearObj = new EducationalYear();
-                $this->payObj = new pay();
-                 $this->UserObj = new User();
-                 $this->DateTimeStamp = $row ["DateTimeStamp"];
-                 $this->IsDeleted = $row ["IsDeleted"];
-                 $this->payObj = new pay();
-
-            }
-
+            $this->ID = $id;
+            $this->EducationalyearObj = new EducationalYear();
+            $this->payObj = new pay();
+             $this->UserObj = new User();
+             $this->DateTimeStamp = $row ["DateTimeStamp"];
+             $this->IsDeleted = $row ["IsDeleted"];
+             $this->payObj = new pay();
+                      
+                        
+		    }
         }
-
-    }
-
-    public function creat()
-    {
-       if(isset($_POST['submit'])) {
-        $ID = $_POST['ID'];
-        $DateTimeStamp= $_POST['DateTimeStamp'];
-        $IsDeleted = $_POST['IsDeleted'];
-       
-       }
-
-       $sql = "INSERT INTO  subject_registration ('DateTimeStamp','IsDeleted ' ) VALUES ('$DateTimeStamp', '$IsDeleted ')  ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function creat($DateTimeStamp,$EducationalyearObj ,$payObj,$UserObj,$IsDeleted,) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="INSERT INTO  subjects_registration (ID,DateTimeStamp,EducationalyearObj ,payObj,UserObj,IsDeleted) VALUES ('$ID','$DateTimeStamp', '$EducationalyearObj ' ,'$payObj','$UserObj','$IsDeleted' )";
+        mysqli_query($con,$sql);
+         if($con == TRUE)
        {
-           echo "New record created succesfully";
+           echo " Record created succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
-    }
-
-   
-
-    public function update()
-    {
-       if(isset($_POST['update'])) {
-        $ID = $_POST['ID'];
-        $DateTimeStamp= $_POST['DateTimeStamp'];
-        $IsDeleted = $_POST['IsDeleted'];
-       }
-
-       $sql = "UPDATE  subject_registration SET 'DateTimeStamp' = $DateTimeStamp, 'ID' = $ID  ,'IsDeleted' =  $IsDeleted  ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    }   
+    function update($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql = "UPDATE   subjects_registration SET 'DateTimeStamp' = $DateTimeStamp, 'ID' = $ID  ,'EducationalyearObj' =  $EducationalyearObj, 'payObj' = $payObj, 'UserObj' =  $UserObj , 'IsDeleted' = $IsDeleted   ";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
-           echo "New record Updated succesfully";
+           echo " Record updated succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
 
-
-    public function delete()
-    {
-       if(isset($_GET['id'])) {
-       $user_id = $_GET['id'];
-       
-       }
-
-       $sql = "DELETE  FROM subject_registration WHERE 'ID' = '$subject_registration_id'";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function delete($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="DELETE FROM  subjects_registration WHERE ID = $id";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
            echo " Record deleted succesfully";
 
@@ -116,17 +80,10 @@ class subject_registration
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
-
-   
-
-   
-
-
     
 }
+
 
 ?>
 
