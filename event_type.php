@@ -1,6 +1,6 @@
 <?php
 include_once("My DB.php");
-class student_status
+class event_type
 {
     public $id;
     public $name;
@@ -13,7 +13,7 @@ class student_status
             
         if($id !="")
         {
-            $sql="select * from student_status   where id = $id";
+            $sql="select * from event_type where id = $id";
             $UserDataSet = mysqli_query($sql)  or die (mysqli_error());
             if($row = mysqli_fetch_array($UserDataSet))
             {
@@ -38,7 +38,7 @@ class student_status
       
        }
 
-       $sql = "INSERT INTO  student_status ('name') VALUES ('$name')  ";
+       $sql = "INSERT INTO  event_type ('name') VALUES ('$name')  ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -63,7 +63,7 @@ class student_status
         $id = $_POST['id'];
        }
 
-       $sql = "UPDATE  student_status SET 'name' = $name, 'id' = $id   ";
+       $sql = "UPDATE  event_type SET 'name' = $name, 'id' = $id   ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
@@ -84,11 +84,11 @@ class student_status
     public function delete()
     {
        if(isset($_GET['id'])) {
-       $student_status _id = $_GET['student_status _id'];
+        $event_type_id = $_GET['id'];
        
        }
 
-       $sql = "DELETE  FROM  student_status  WHERE 'id' = '$student_status_id'";
+       $sql = "DELETE  FROM  event_type  WHERE 'id' = '  $event_type_id' ";
         
        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
 
