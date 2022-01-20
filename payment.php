@@ -1,48 +1,112 @@
 <?php
+include_once("My DB.php");
+class payment
+{
+    public $id;
+    public $paytype;
 
-class payment {
-    //put your code here
-    public $ID;
-    public $student_id;
-    public $iscreated;
-    public $amount;
-    public $paytype_id;
-            
-        function __construct($id)
-	{
-		global $con;
-                $con = mysqli_connect("localhost", "root", "","system database");
-		if ($id != -1)
-		{	
-			$sql="SELECT * FROM paymentsdetails WHERE id=$id";
-			$StudentDataSet = mysqli_query($con,$sql) or die(mysql_error());
-			$row = mysqli_fetch_array($StudentDataSet);
-                        $this->ID=$id;
-                        $this->student_id=$row["student_id"];
-                        $this->iscreated = $row["iscreated"];
-                        $this->amount = $row["amount"];
-                        $this->paytype_id=$row["paytype_id"];
-                       
-		}
-        }
-    function createpayment() {
-        global $con;
-        $con = mysqli_connect("localhost", "root", "","system database");
-        $sql="INSERT INTO paymentsdetails(id,student_id,iscreated,amount,paytype_id) VALUES ('$id','$student_id','$iscreated','$amount','$paytype_id')";
-        mysqli_query($con,$sql) or die(mysql_error());
-    }   
-    function updatepayment($id) {
-        global $con;
-        $con = mysqli_connect("localhost", "root", "","system database");
-        $sql="UPDATE INTO paymentsdetails(id,student_id,iscreated,amount,paytype_id) SET amount = $amount ,paytype_id= $paytype_id)";
-        mysqli_query($con,$sql) or die(mysql_error());
-    }
-    function deletepayment($id) {
-        global $con;
-        $con = mysqli_connect("localhost", "root", "","system database");
-        $sql="DELETE FROM paymentsdetails WHERE id = $id";
-        mysqli_query($con,$sql) or die(mysql_error());
-    }
+
     
+    function __construct($id)
+    {
+        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare();
+            
+        if($id !="")
+        {
+            $sql="select * from payment where id = $id";
+            $paymentDataSet = mysqli_query($sql)  or die (mysqli_error());
+            if($row = mysqli_fetch_array($paymentDataSet))
+            {
+
+                $this->id = $id;
+                $this->paytype = $row ["paytype"];
+
+                
+            }
+
+        }
+
+    }
+
+
+
+    public function creat()
+    {
+       if(isset($_POST['submit'])) {
+        $id = $_POST['id'];
+        $paytype = $_POST['paytype'];
+      
+       }
+
+       $sql = "INSERT INTO  payment ('paytype') VALUES ('$paytype')  ";
+        
+       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
+
+       if($result == TRUE)
+       {
+           echo "New record created succesfully";
+
+       }
+
+       else {
+           echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
+       }
+
+
+    }
+
+
+    public function update()
+    {
+       if(isset($_POST['update'])) {
+        $paytype = $_POST['paytype'];
+        $id = $_POST['id'];
+       }
+
+       $sql = "UPDATE  payment SET 'paytype' = $paytype, 'id' = $id   ";
+        
+       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
+
+       if($result == TRUE)
+       {
+           echo "New record Updated succesfully";
+
+       }
+
+       else {
+           echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
+       }
+
+
+    }
+
+
+    public function delete()
+    {
+       if(isset($_GET['id'])) {
+        $payment_id = $_GET['id'];
+       
+       }
+
+       $sql = "DELETE  FROM payment WHERE 'id' = '$payment_id'";
+        
+       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
+
+       if($result == TRUE)
+       {
+           echo " Record deleted succesfully";
+
+       }
+
+       else {
+           echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
+       }
+
+
+    }
+
+
 }
 
+
+?>
