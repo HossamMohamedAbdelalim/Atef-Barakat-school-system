@@ -1,7 +1,8 @@
 <?php
-require_once("DatabaseConnection.php");
-class user
-{
+include_once 'myDB.php';
+include_once("usertype.php");
+include_once("links_aka_perms.php");
+class user {
     public $ID;
     public $FullName;
     public $DOB;
@@ -11,111 +12,66 @@ class user
     public $EMAIL;
     public $USERTYPEObj;
     public $LINKObj;  
-    //public $x = new DatabaseConnection();
-
-    
     function __construct($id)
     {
-        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare();
-            
-        if($id !="")
-        {
-            $sql="select * from user where ID = $id";
-            $UserDataSet = mysqli_query($sql)  or die (mysqli_error());
-            if($row = mysqli_fetch_array($UserDataSet))
-            {
-
-                $this->id = $id;
-                $this->FullName = $row ["FullName"];
-                $this->USERNAME = $row ["USERNAME"];
-                $this->EMAIL = $row ["EMAIL"];
-                $this->password = $row ["Password"];
-                $this-> Address = $row ["Address"];
-                $this->DOB = $row ["DOB"];
-              $this->USERTYPEObj = new USERTYPE();
-              $this->LINKObj = new LINK();
-            }
-           
-
-            
-
+		global $con;
+                $con = mysqli_connect("localhost", "root", "","system database");
+		if ($id != -1)
+		{	
+			$sql="SELECT * FROM user WHERE ID=$id";
+			$userDataSet = mysqli_query($con,$sql) or die(mysql_error());
+			$row = mysqli_fetch_array($userDataSet);
+                        $this->ID=$id;
+                        $this->FullName=$row["FullName"];
+                        $this->DOB=$row["DOB"];
+                        $this->USERNAME=$row["USERNAME"];
+                        $this->password=$row["password"];
+                        $this->Address=$row["Address"];
+                        $this->EMAIL=$row["EMAIL"];
+                        $this->USERTYPEObj = new USERTYPE();
+                        $this->LINKObj = new LINK();
+                      
+                      
+                        
+		    }
         }
-
-    }
-
-    public function creat()
-    {
-       if(isset($_POST['submit'])) {
-        $FullName = $_POST['FullName'];
-        $ID = $_POST['ID'];
-        $DOB = $_POST['DOB'];
-        $USERNAME = $_POST['USERNAME'];
-        $password = $_POST['password'];
-        $Address = $_POST['Address'];
-        $EMAIL = $_POST['EMAIL'];
-       }
-
-       $sql = "INSERT INTO  'user' ('FullName','DOB' , 'USERNAME', 'password', 'Address', 'EMAIL') VALUES ('$FullName', '$DOB',  $USERNAME', '$password' , ' $Address', '  $EMAIL')  ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function creat() {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="INSERT INTO user (ID,FullName,DOB,USERNAME,password,Address,EMAIL) VALUES ('$id','$FullName', '$DOB' ,'$USERNAME','$password','$Address','$EMAIL' )";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
-           echo "New record created succesfully";
+           echo " Record created succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
-    }
-
-   
-
-    public function update()
-    {
-       if(isset($_POST['update'])) {
-        $FullName = $_POST['FullName'];
-        $ID = $_POST['ID'];
-        $DOB = $_POST['DOB'];
-        $USERNAME = $_POST['USERNAME'];
-        $password = $_POST['password'];
-        $Address = $_POST['Address'];
-        $EMAIL = $_POST['EMAIL'];
-       }
-
-       $sql = "UPDATE  'user' SET 'FullName' = $FullName, 'ID' = $ID  ,'DOB' =  $DOB, 'USERNAME' = $USERNAME, 'password' =  $password , 'Address' = $Address, 'EMAIL' = $EMAIL   ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    }   
+    function update($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql = "UPDATE  user SET 'FullName' = $FullName, 'ID' = $ID  ,'DOB' =  $DOB, 'USERNAME' = $USERNAME, 'password' =  $password , 'Address' = $Address, 'EMAIL' = $EMAIL   ";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
-           echo "New record Updated succesfully";
+           echo " Record updated succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
 
-
-    public function delete()
-    {
-       if(isset($_GET['id'])) {
-       $user_id = $_GET['id'];
-       
-       }
-
-       $sql = "DELETE  FRoM 'user' WHERE 'id' = '$user_id'";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function delete($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="DELETE FROM user WHERE id = $id";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
            echo " Record deleted succesfully";
 
@@ -124,103 +80,8 @@ class user
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
-
-   
-
-    public static function SelectAllusersInDB()
-	{
-        $UserDataSet = "";
-        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-		$sql="select * from user order by FullName";
-		$UserDataSet = mysqli_connect($sql) ;
-		
-		$i=0;
-		$result = "";
-		while ($row = mysqli_fetch_array($UserDataSet))
-		{
-			$MyObj= new user($row["Id"]);
-			$result[$i]=$MyObj;
-			$i++;
-		}
-		return $result;
-		
-	}
-
-
-    public function register()
-    {
-       if(isset($_POST['submit']))
-       {
-        $USERNAME = $_POST['USERNAME'];
-        $EMAIL = $_POST['EMAIL'];
-        $password = $_POST['password'];
-        $confirmpassword = $_POST['confirmpassword'];
-        
-        if( $password ==   $confirmpassword)
-        {
-            $sql = "INSERT INTO 'user'  ( 'USERNAME', 'EMAIL', 'password', 'confirmpassword' ) VALUES ('$USERNAME', '$email' ,'$passward' , '$confirmpassword' )";
-
-        }
-
-
-       }
-
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
-       {
-           echo " You are registered succesfully";
-
-       }
-
-       else {
-           echo "Password not match:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
-       }
-
-
-    }
-
-
-    public function login()
-    {
-       if(isset($_POST['submit']))
-       {
-        $USERNAME = $_POST['USERNAME'];
-        $password = $_POST['password'];
-        
-            $sql = mysqli_query( " select password from user where username = '$USERNAME'");
-            
-            $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-            if($row = mysqli_fetch_array($sql))
-            {
-                if($password == $row['password'] )
-                {
-                    echo " Valid Password";
-                }
-                else 
-                echo " Invalid Password";
-            }
-            else 
-            echo " Invalid  Username";
-        
-            }
-
-
-      
-
-       
-
-    }
+    
 }
 
-
-
-
-$x = new user(2);
-echo $x->FullName;
-echo "<br>";
-echo $x->EMAIL;
 ?>
