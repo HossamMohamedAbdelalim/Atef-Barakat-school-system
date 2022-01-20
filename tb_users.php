@@ -1,109 +1,72 @@
 <?php
-include_once("My DB.php");
+include_once 'myDB.php';
 include_once("user.php");
 include_once("usertype.php");
-class tb_users
-{
+class tb_users {
     public $ID;
     public $FullName;
     public $Email;
     public $Password;
     public $DateOfBirth;
     public $UserType_id;
-
     function __construct($id)
     {
-        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare();
-            
-        if($id !="")
-        {
-            $sql="select * from user where ID = $id";
-            $Tb_usersDataSet = mysqli_query($sql)  or die (mysqli_error());
-            if($row = mysqli_fetch_array($Tb_usersDataSet ))
-            {
-
+		global $con;
+                $con = mysqli_connect("localhost", "root", "","system database");
+		if ($id != -1)
+		{	
+			$sql="SELECT * FROM tb_users WHERE ID=$id";
+			$userDataSet = mysqli_query($con,$sql);
+			$row = mysqli_fetch_array($userDataSet);
+                       
                 $this->ID = $id;
                 $this->FullName = $row ["FullName"];
                 $this->Email = $row ["Email"];
                 $this->password = $row ["Password"];
                 $this->DateOfBirth = $row ["DateOfBirth"];
                 $this->UserTypeObj = new UserType();
-            }
-           
+                      
+                      
+                        
+		    }
         }
-
-    }
-
-
-
-    public function creat()
-    {
-       if(isset($_POST['submit'])) {
-        $FullName = $_POST['FullName'];
-        $ID = $_POST['ID'];
-        $DateOfBirth = $_POST['DateOfBirth '];
-        $password = $_POST['password'];
-        $Email = $_POST['Email'];
-       }
-
-       $sql = "INSERT INTO  tb_users ('FullName','DateOfBirth' , 'password', 'Email') VALUES ('$FullName', '$DateOfBirth', '$password' ,  '  $Email')  ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function creat($FullName,$Email ,$password,$DateOfBirth,$UserTypeObj) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="INSERT INTO tb_users (ID,FullName,password,EMAIL,DateOfBirth,UserTypeObj) VALUES ('$ID','$FullName' ,'$password','$EMAIL' ,'$DateOfBirth','$UserTypeObj')";
+        mysqli_query($con,$sql);
+         if($con == TRUE)
        {
-           echo "New record created succesfully";
+           echo " Record created succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
-    }
-
-   
-    public function update()
-    {
-       if(isset($_POST['update'])) {
-        $FullName = $_POST['FullName'];
-        $ID = $_POST['ID'];
-        $DateOfBirth = $_POST['DateOfBirth'];
-        $password = $_POST['password'];
-        $Email = $_POST['Email'];
-       }
-
-       $sql = "UPDATE  tp_users SET 'FullName' = $FullName, 'ID' = $ID  ,'DateOfBirth' =   $DateOfBirth, 'password' =  $password , 'Email' = $Email   ";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    }   
+    function update($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql = "UPDATE  tb_users SET 'FullName' = $FullName, 'ID' = $ID   'password' =  $password , 'EMAIL' = $EMAIL ,'DateOfBirth' = $DateOfBirth  ,'UserTypeObj' = $UserTypeObj   ";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
-           echo "New record Updated succesfully";
+           echo " Record updated succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
 
-
-    public function delete()
-    {
-       if(isset($_GET['id'])) {
-       $Tb_users_id = $_GET['id'];
-       
-       }
-
-       $sql = "DELETE  FROM tb_users WHERE 'id' = '  $Tb_users_id'";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+    function delete($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        $sql="DELETE FROM tb_users WHERE ID = $id";
+        mysqli_query($con,$sql) or die(mysql_error());
+         if($con == TRUE)
        {
            echo " Record deleted succesfully";
 
@@ -112,9 +75,9 @@ class tb_users
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
+    
+}
 
 
 
