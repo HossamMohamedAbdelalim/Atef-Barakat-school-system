@@ -1,98 +1,58 @@
 <?php
-include_once("My DB.php");
-class payment
-{
-    public $id;
-    public $paytype;
-
-
-    
-    function __construct($id)
-    {
-        $stmt = DatabaseConnection::getInstance()->database_connection-> prepare();
-            
-        if($id !="")
-        {
-            $sql="select * from payment where id = $id";
-            $paymentDataSet = mysqli_query($sql)  or die (mysqli_error());
-            if($row = mysqli_fetch_array($paymentDataSet))
-            {
-
-                $this->id = $id;
-                $this->paytype = $row ["paytype"];
-
-                
-            }
-
+require_once 'myDB.php';
+class payment {
+    //put your code here
+    public $ID;
+    public $student_id;
+    public $iscreated;             
+    public $amount;
+    public $paytype_id;
+    public $paymentmethodoption;
+            function __construct($ID)
+	{
+           global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
+        
+		if ($ID !=-1)
+		{	
+			$sql="SELECT * FROM paymentsdetails WHERE ID=$ID";
+			$StudentDataSet = mysqli_query($con,$sql) or die(mysqli_error());
+			$row = mysqli_fetch_array($StudentDataSet);
+                        {        
+                        $this->ID=$ID;
+                        $this->student_id=$row["student_id"];
+                        $this->iscreated = $row["iscreated"];
+                        $this->amount = $row["value"];
+                        $this->paytype_id=$row["paytype_id"];
+                        $this->paymentmethodoption=$row["paymentmethodoption"];
+                        }
+		}
         }
-
-    }
-
-
-
-    public function creat()
-    {
-       if(isset($_POST['submit'])) {
-        $id = $_POST['id'];
-        $paytype = $_POST['paytype'];
-      
-       }
-
-       $sql = "INSERT INTO  payment ('paytype') VALUES ('$paytype')  ";
+    function createpaymentdet($student_id,$amount,$paytype_id,$paymentmethodoption) {
+       global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
         
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+        $sql="INSERT INTO paymentsdetails(student_id,value,paytype_id,paymentmethodoption) VALUES ('$student_id','$amount','$paytype_id','$paymentmethodoption')";
+        $StudentDataSet =mysqli_query($con,$sql) or die(mysql_error());
+         if($StudentDataSet == TRUE)
        {
-           echo "New record created succesfully";
+           echo " Record created succesfully";
 
        }
 
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
-    }
-
-
-    public function update()
-    {
-       if(isset($_POST['update'])) {
-        $paytype = $_POST['paytype'];
-        $id = $_POST['id'];
-       }
-
-       $sql = "UPDATE  payment SET 'paytype' = $paytype, 'id' = $id   ";
+    }   
+    
+    function deletepaymentdet($id) {
+        global $con;
+        $con = mysqli_connect("localhost", "root", "","system database");
         
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
-       {
-           echo "New record Updated succesfully";
-
-       }
-
-       else {
-           echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
-       }
-
-
-    }
-
-
-    public function delete()
-    {
-       if(isset($_GET['id'])) {
-        $payment_id = $_GET['id'];
-       
-       }
-
-       $sql = "DELETE  FROM payment WHERE 'id' = '$payment_id'";
-        
-       $result = DatabaseConnection::getInstance()->database_connection->query($sql);
-
-       if($result == TRUE)
+        $sql="DELETE FROM paymentsdetails WHERE id = $id";
+        mysqli_query($sql) or die(mysql_error());
+        $result = DatabaseConnection::getInstance()->database_connection->query($sql);
+         if($result == TRUE)
        {
            echo " Record deleted succesfully";
 
@@ -101,12 +61,6 @@ class payment
        else {
            echo "Error:" .$sql . "<br>". DatabaseConnection::getInstance()->database_connection->error;
        }
-
-
     }
-
-
+    
 }
-
-
-?>
