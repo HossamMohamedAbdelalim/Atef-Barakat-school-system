@@ -10,7 +10,7 @@ public function payvisa()
 {
     return 'payment with visa';
 }
-public function pay_paypal()
+public function payvodafonecash()
 {
     return 'pay with paypal';
 }
@@ -21,7 +21,7 @@ protected abstract function step3();
 }
 
 
-class paymentwithcash extends payment
+class paymentwihcash extends payment
 {
     public function type(){
         return 'cash';
@@ -56,7 +56,7 @@ class paymentwithvisa extends payment
         return 'transaction completed go register courses ';
     }
 }
-class paymentwithpaypal extends payment
+class paymentwithvodafonecash extends payment
 {
         public function type(){
         return 'paypal';
@@ -85,7 +85,7 @@ echo "the second step：" . $payvisa->step2() ;
 echo "the third step：" . $payvisa->step3() ;
 
 
-$paypaypal=new paymentwithpaypal;
+$paypaypal=new paymentwithvodafonecash;
 echo "your type：" . $paypaypal->pay_paypal() ;
 echo "the first step：" . $paypaypal->step1() ;
 echo "the second step：" . $paypaypal->step2()  ;
